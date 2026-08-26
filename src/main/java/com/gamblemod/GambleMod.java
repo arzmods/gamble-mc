@@ -24,7 +24,7 @@ public class GambleMod implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        PayloadTypeRegistry.playC2S().register(DoubleOrNothingPayload.TYPE, DoubleOrNothingPayload.CODEC);
+      PayloadTypeRegistry.serverboundPlay().register(DoubleOrNothingPayload.TYPE, DoubleOrNothingPayload.CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(DoubleOrNothingPayload.TYPE, (payload, context) -> {
             ServerPlayer player = context.player();
