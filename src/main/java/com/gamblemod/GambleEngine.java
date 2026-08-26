@@ -116,7 +116,7 @@ public final class GambleEngine {
 
     private static void spawnWitherOnHead(ServerPlayer player) {
         ServerLevel level = (ServerLevel) player.level();
-        Wither wither = new Wither(EntityType.WITHER, level);
+       WitherBoss wither = new WitherBoss(EntityType.WITHER, level);
         wither.moveTo(player.getX(), player.getY() + 2.0, player.getZ(), 0, 0);
         level.addFreshEntity(wither);
     }
