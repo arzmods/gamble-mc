@@ -1,3 +1,4 @@
+
 package com.gamblemod;
 
 import net.fabricmc.api.ModInitializer;
@@ -15,12 +16,11 @@ import java.util.UUID;
 
 public class GambleMod implements ModInitializer {
 
-    private static final int COOLDOWN_MIN_TICKS = 20;
-    private static final int COOLDOWN_MAX_TICKS = 40;
+    // Roll interval: 2 minutes = 2 * 60 * 20 ticks (20 ticks/sec).
+    private static final int ROLL_INTERVAL_TICKS = 2 * 60 * 20;
     private static final int OFFER_WINDOW_TICKS = 100;
 
     private final Map<UUID, PlayerGambleState> states = new HashMap<>();
-    private final java.util.Random random = new java.util.Random();
 
     @Override
     public void onInitialize() {
@@ -42,11 +42,11 @@ public class GambleMod implements ModInitializer {
     }
 
     private void tickPlayer(ServerPlayer player) {
-        PlayerGambleState state = states.computeIfAbsent(player.getUUID(), id -> new PlayerGambleState());
-
-        if (state.cooldownTicks > 0) {
-            state.cooldownTicks--;
-        }
+        PlayerGambleState state = states.computeIfAbsent(player.getUUID(), id -> {
+            PlayerGambleState fresh = new PlayerGambleState();
+            fresh.cooldownTicks = ROLL_INTERVAL_TICKS; // don't roll the instant they join
+            return fresh;
+        });
 
         if (state.hasPendingOffer()) {
             state.pendingExpiryTicks--;
@@ -55,28 +55,23 @@ public class GambleMod implements ModInitializer {
             }
         }
 
-        var currentPos = player.blockPosition();
-        boolean moved = state.lastPos == null || !state.lastPos.equals(currentPos);
-        boolean jumped = state.wasOnGround && !player.onGround() && player.getDeltaMovement().y > 0.1;
+        if (state.cooldownTicks > 0) {
+            state.cooldownTicks--;
+            return;
+        }
 
-        state.lastPos = currentPos;
-        state.wasOnGround = player.onGround();
+        state.cooldownTicks = ROLL_INTERVAL_TICKS;
 
-        if ((moved || jumped) && state.cooldownTicks <= 0) {
-            state.cooldownTicks = COOLDOWN_MIN_TICKS + random.nextInt(COOLDOWN_MAX_TICKS - COOLDOWN_MIN_TICKS + 1);
+        GambleTier[] outTier = new GambleTier[1];
+        ItemStack awarded = GambleEngine.rollAndApply(player, outTier);
 
-            GambleTier[] outTier = new GambleTier[1];
-            ItemStack awarded = GambleEngine.rollAndApply(player, outTier);
-
-            if (!awarded.isEmpty() && (outTier[0] == GambleTier.GOOD || outTier[0] == GambleTier.JACKPOT)) {
-                boolean rare = outTier[0] == GambleTier.GOOD && isDiamondItem(awarded);
-                state.pendingItem = awarded.copy();
-                state.pendingItemTier = outTier[0];
-                state.pendingIsRare = rare;
-                state.pendingExpiryTicks = OFFER_WINDOW_TICKS;
-                player.displayClientMessage(
-                        Component.literal("Press [G] to Double or Nothing!"), true);
-            }
+        if (!awarded.isEmpty() && (outTier[0] == GambleTier.GOOD || outTier[0] == GambleTier.JACKPOT)) {
+            boolean rare = outTier[0] == GambleTier.GOOD && isDiamondItem(awarded);
+            state.pendingItem = awarded.copy();
+            state.pendingItemTier = outTier[0];
+            state.pendingIsRare = rare;
+            state.pendingExpiryTicks = OFFER_WINDOW_TICKS;
+            player.displayClientMessage(Component.literal("Press [G] to Double or Nothing!"), true);
         }
     }
 
