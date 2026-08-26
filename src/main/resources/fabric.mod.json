@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "gamblemod",
+  "version": "1.0.0",
+  "name": "Minecraft: Gamble",
+  "description": "Every step or jump rolls the wheel of fate.",
+  "authors": ["arzmods"],
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.gamblemod.GambleMod"
+    ],
+    "client": [
+      "com.gamblemod.GambleModClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.0",
+    "fabric-api": "*",
+    "minecraft": "*",
+    "java": ">=25"
+  }
+}
