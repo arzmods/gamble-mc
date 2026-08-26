@@ -3,14 +3,14 @@ package com.gamblemod;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public record DoubleOrNothingPayload() implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<DoubleOrNothingPayload> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("gamblemod", "double_request"));
+            new CustomPacketPayload.Type<>);
 
     public static final StreamCodec<RegistryFriendlyByteBuf, DoubleOrNothingPayload> CODEC =
-            StreamCodec.unit(new DoubleOrNothingPayload());
+            StreamCodec.unit(new DoubleOrNothingPayload(Identifier.fromNamespaceAndPath("gamblemod", "double_request")));
 
     @Override
     public Type<? extends CustomPacketPayload> type() {
