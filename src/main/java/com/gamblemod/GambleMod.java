@@ -1,4 +1,3 @@
-
 package com.gamblemod;
 
 import net.fabricmc.api.ModInitializer;
@@ -16,7 +15,6 @@ import java.util.UUID;
 
 public class GambleMod implements ModInitializer {
 
-    // Roll interval: 2 minutes = 2 * 60 * 20 ticks (20 ticks/sec).
     private static final int ROLL_INTERVAL_TICKS = 2 * 60 * 20;
     private static final int OFFER_WINDOW_TICKS = 100;
 
@@ -24,7 +22,7 @@ public class GambleMod implements ModInitializer {
 
     @Override
     public void onInitialize() {
-      PayloadTypeRegistry.serverboundPlay().register(DoubleOrNothingPayload.TYPE, DoubleOrNothingPayload.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(DoubleOrNothingPayload.TYPE, DoubleOrNothingPayload.CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(DoubleOrNothingPayload.TYPE, (payload, context) -> {
             ServerPlayer player = context.player();
@@ -41,11 +39,10 @@ public class GambleMod implements ModInitializer {
         });
     }
 
-private static void broadcast(ServerPlayer player, String message) {
-        ServerLevel level = (ServerLevel) player.level();
-        level.getServer().getPlayerList().broadcastSystemMessage(Component.literal(message), false);
-    }
-            fresh.cooldownTicks = ROLL_INTERVAL_TICKS; // don't roll the instant they join
+    private void tickPlayer(ServerPlayer player) {
+        PlayerGambleState state = states.computeIfAbsent(player.getUUID(), id -> {
+            PlayerGambleState fresh = new PlayerGambleState();
+            fresh.cooldownTicks = ROLL_INTERVAL_TICKS;
             return fresh;
         });
 
@@ -72,7 +69,7 @@ private static void broadcast(ServerPlayer player, String message) {
             state.pendingItemTier = outTier[0];
             state.pendingIsRare = rare;
             state.pendingExpiryTicks = OFFER_WINDOW_TICKS;
-            player.displayClientMessage(Component.literal("Press [G] to Double or Nothing!"), true);
+            player.sendSystemMessage(Component.literal("Press [G] to Double or Nothing!"));
         }
     }
 
