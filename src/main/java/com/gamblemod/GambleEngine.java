@@ -1,4 +1,4 @@
-package com.gamblemod;
+ package com.gamblemod;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -9,9 +9,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.monster.zombie.Zombie;
-import net.minecraft.world.entity.boss.wither.WitherBoss;
-import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -118,9 +120,12 @@ public final class GambleEngine {
 
     private static void spawnWitherOnHead(ServerPlayer player) {
         ServerLevel level = (ServerLevel) player.level();
-        WitherBoss wither = new WitherBoss(EntityTypes.WITHER_BOSS, level);
-        wither.setPos(player.getX(), player.getY() + 2.0, player.getZ());
-        level.addFreshEntity(wither);
+        EntityType<?> witherType = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("minecraft", "wither"));
+        Entity wither = witherType.create(level, EntitySpawnReason.MOB_SUMMONED);
+        if (wither != null) {
+            wither.setPos(player.getX(), player.getY() + 2.0, player.getZ());
+            level.addFreshEntity(wither);
+        }
     }
 
     private static void deleteHalfInventory(ServerPlayer player) {
@@ -150,8 +155,10 @@ public final class GambleEngine {
 
     private static void spawnZombieHorde(ServerPlayer player) {
         ServerLevel level = (ServerLevel) player.level();
+        EntityType<?> zombieType = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("minecraft", "zombie"));
         for (int i = 0; i < 5; i++) {
-            Zombie zombie = new Zombie(EntityTypes.ZOMBIE, level);
+            Entity zombie = zombieType.create(level, EntitySpawnReason.MOB_SUMMONED);
+            if (zombie == null) continue;
             double angle = RANDOM.nextDouble() * Math.PI * 2;
             double dist = 2.0 + RANDOM.nextDouble() * 2.0;
             zombie.setPos(player.getX() + Math.cos(angle) * dist, player.getY(),
