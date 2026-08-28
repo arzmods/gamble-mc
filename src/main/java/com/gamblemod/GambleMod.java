@@ -41,9 +41,10 @@ public class GambleMod implements ModInitializer {
         });
     }
 
-    private void tickPlayer(ServerPlayer player) {
-        PlayerGambleState state = states.computeIfAbsent(player.getUUID(), id -> {
-            PlayerGambleState fresh = new PlayerGambleState();
+private static void broadcast(ServerPlayer player, String message) {
+        ServerLevel level = (ServerLevel) player.level();
+        level.getServer().getPlayerList().broadcastSystemMessage(Component.literal(message), false);
+    }
             fresh.cooldownTicks = ROLL_INTERVAL_TICKS; // don't roll the instant they join
             return fresh;
         });
