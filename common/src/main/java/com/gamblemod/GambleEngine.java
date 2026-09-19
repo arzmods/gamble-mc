@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Prediction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
@@ -205,7 +206,7 @@ public final class GambleEngine {
 
     private static void giveItem(ServerPlayer player, ItemStack stack) {
         if (!player.getInventory().add(stack.copy())) {
-            player.drop(stack.copy(), false);
+            player.drop(stack.copy(), false, Prediction.SERVER_ONLY);
         }
     }
 
