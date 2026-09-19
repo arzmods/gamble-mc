@@ -1,0 +1,25 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+license = "MIT"
+issueTrackerURL = "https://github.com/arzmods/gamble-mc/issues"
+
+[[mods]]
+modId = "gamblemod"
+version = "1.0.0"
+displayName = "Minecraft: Gamble"
+authors = "arzmods"
+description = '''Every step or jump rolls the wheel of fate.'''
+
+[[dependencies.gamblemod]]
+modId = "neoforge"
+type = "required"
+versionRange = "[26.3.0.0-beta,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.gamblemod]]
+modId = "minecraft"
+type = "required"
+versionRange = "[26.3,)"
+ordering = "NONE"
+side = "BOTH"

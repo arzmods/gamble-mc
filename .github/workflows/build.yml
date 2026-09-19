@@ -1,8 +1,9 @@
-name: Compile Mod JAR
+name: Compile Mod JARs
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, 'claude/**' ]
+  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -18,13 +19,19 @@ jobs:
           distribution: 'temurin'
 
       - name: Generate Gradle wrapper
-        run: gradle wrapper --gradle-version 9.5.1
+        run: gradle wrapper --gradle-version 9.6.0
 
       - name: Build
         run: ./gradlew build --no-daemon
 
-      - name: Upload built jar
+      - name: Upload Fabric jar
         uses: actions/upload-artifact@v4
         with:
-          name: gamble-mod-jar
-          path: build/libs/*.jar
+          name: gamble-mod-fabric
+          path: fabric/build/libs/*.jar
+
+      - name: Upload NeoForge jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: gamble-mod-neoforge
+          path: neoforge/build/libs/*.jar
