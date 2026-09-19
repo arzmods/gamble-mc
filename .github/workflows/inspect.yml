@@ -52,9 +52,13 @@ jobs:
           javap -p 'net/minecraft/client/KeyMapping$Category.class' 2>/dev/null | head -20
           echo "===== Inventory add/place ====="
           javap -p net/minecraft/world/entity/player/Inventory.class 2>/dev/null | grep -Ei 'add|place|setItem|getItem|ContainerSize'
+          echo "===== Prediction ====="
+          javap -p net/minecraft/util/Prediction.class 2>/dev/null
+          echo "===== ItemEntity ctors ====="
+          javap -p net/minecraft/world/entity/item/ItemEntity.class 2>/dev/null | grep -E 'ItemEntity\(|setPickUpDelay|setTarget'
           echo "===== NeoForge event classes ====="
           mkdir -p /tmp/nf && cd /tmp/nf && unzip -o -q "$NF" >/dev/null 2>&1 || true
-          for c in net/neoforged/neoforge/event/tick/ServerTickEvent net/neoforged/neoforge/client/event/ClientTickEvent net/neoforged/neoforge/network/event/RegisterPayloadHandlersEvent net/neoforged/neoforge/network/registration/PayloadRegistrar net/neoforged/neoforge/network/PacketDistributor net/neoforged/neoforge/client/event/RegisterKeyMappingsEvent; do
+          for c in net/neoforged/neoforge/event/tick/ServerTickEvent net/neoforged/neoforge/client/event/ClientTickEvent net/neoforged/neoforge/network/event/RegisterPayloadHandlersEvent net/neoforged/neoforge/network/registration/PayloadRegistrar net/neoforged/neoforge/network/PacketDistributor net/neoforged/neoforge/client/event/RegisterKeyMappingsEvent net/neoforged/neoforge/client/network/ClientPacketDistributor net/neoforged/neoforge/network/handling/IPayloadContext; do
             echo "--- $c ---"
             ls ${c}*.class 2>/dev/null || echo "MISSING"
             javap -p ${c}.class 2>/dev/null | head -15

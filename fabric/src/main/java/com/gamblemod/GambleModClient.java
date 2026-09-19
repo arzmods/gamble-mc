@@ -19,7 +19,7 @@ public class GambleModClient implements ClientModInitializer {
     public void onInitializeClient() {
         doubleOrNothingKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "key.gamblemod.double_or_nothing",
-                InputConstants.Type.KEYSYM,
+                InputConstants.Type.KEYBOARD,
                 InputConstants.KEY_G,
                 CATEGORY
         ));

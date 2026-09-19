@@ -10,7 +10,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 @Mod(value = GambleModNeoForge.MOD_ID, dist = Dist.CLIENT)
 public class GambleModNeoForgeClient {
@@ -28,7 +28,7 @@ public class GambleModNeoForgeClient {
     private void registerKeyMappings(RegisterKeyMappingsEvent event) {
         doubleOrNothingKey = new KeyMapping(
                 "key.gamblemod.double_or_nothing",
-                InputConstants.Type.KEYSYM,
+                InputConstants.Type.KEYBOARD,
                 InputConstants.KEY_G,
                 CATEGORY
         );
@@ -37,7 +37,7 @@ public class GambleModNeoForgeClient {
 
     private void onClientTick(ClientTickEvent.Post event) {
         while (doubleOrNothingKey.consumeClick()) {
-            PacketDistributor.sendToServer(new DoubleOrNothingPayload());
+            ClientPacketDistributor.sendToServer(new DoubleOrNothingPayload());
         }
     }
 }
